@@ -32,6 +32,65 @@
 - `lm-sensors` для чтения температуры.
 - Токен Telegram-бота и ID чата для уведомлений.
 
+## Установка через Docker
+
+1. **Установите Docker**:
+   ```bash
+   sudo apt update
+   sudo apt install docker.io
+   sudo systemctl start docker
+   sudo systemctl enable docker
+   ```
+2. **Скачайте образ**:
+   - Либо с Docker Hub:
+     ```bash
+     docker pull shihkauskas/pet-temp-monitor:1.0.0
+     ```
+   - Либо соберите локально:
+     ```bash
+     git clone https://github.com/shihkauskas/pet_temp_monitor.git
+     cd pet_temp_monitor
+     docker build -t shihkauskas/pet-temp-monitor:1.0.0 .
+     ```
+3. **Запустите контейнер**:
+   - Пример с volume для логов:
+     ```bash
+     mkdir -p ~/pet_temp_logs
+     docker run -d \
+       --name pet-temp-monitor \
+       --device /dev/i2c-1 \
+       -v ~/pet_temp_logs:/opt/pet_temp/logs \
+       -p 8080:8080 \
+       shihkauskas/pet-temp-monitor:1.0.0
+     ```
+   - **Пояснение**:
+     - `--device /dev/i2c-1`: Даёт доступ к `lm-sensors` (проверь устройство с `ls /dev/i2c*`).
+     - `-v ~/pet_temp_logs:/opt/pet_temp/logs`: Монтирует логи на хост в `~/pet_temp_logs`.
+     - `-p 8080:8080`: Пробрасывает порт веб-интерфейса.
+4. **Настройте Telegram**:
+   - Отредактируйте `temp_monitor_core.py` внутри контейнера:
+     ```bash
+     docker exec -it pet-temp-monitor bash
+     nano /opt/pet_temp/temp_monitor_core.py
+     ```
+     Укажите:
+     ```python
+     TELEGRAM_TOKEN = 'YOUR_BOT_TOKEN'  # Получите через @BotFather
+     TELEGRAM_CHAT_ID = 'YOUR_CHAT_ID'  # ID вашего чата
+     ```
+   - Перезапустите процесс:
+     ```bash
+     docker exec pet-temp-monitor supervisorctl restart temp_monitor_core
+     ```
+5. **Проверьте**:
+   - Логи: `ls ~/pet_temp_logs` (например, `temp_monitor.log`, `core_err.log`, `web_out.log`).
+   - Уведомления в Telegram: при температуре > 65°C (🚨) и ≤ 60°C (✅).
+   - Веб-интерфейс: http://localhost:8080.
+   - Статус процессов:
+     ```bash
+     docker exec pet-temp-monitor supervisorctl status
+     ```
+
 ## Установка через DEB-пакет
 
 1. **Установите базовые зависимости**:
@@ -216,7 +275,7 @@ sudo systemctl enable pet-temp-web
 ## Планы по развитию
 - Поддержка нескольких сенсоров.
 - Интеграция с `shoutrrr`.
-- Docker-контейнер (Alpine).
+- env для передачи токена внутрь контейнера.
 
 ## Как внести вклад
 Открывайте issues или pull requests на GitHub.
