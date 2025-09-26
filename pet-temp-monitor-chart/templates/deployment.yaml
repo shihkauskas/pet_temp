@@ -1,7 +1,0 @@
-{{- if .Values.deployment.enabled }}
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: {{ include "pet-temp-monitor.fullname" . }}
-  labels:
-    {{- include "pet-temp-monitor
