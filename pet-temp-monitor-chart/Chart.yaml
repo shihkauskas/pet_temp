@@ -1,0 +1,6 @@
+apiVersion: v2
+name: pet-temp-monitor
+description: Helm chart for Pet Temp Monitor DaemonSet
+type: application
+version: 1.0.0
+appVersion: 1.0.0

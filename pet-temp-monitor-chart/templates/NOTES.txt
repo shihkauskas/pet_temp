@@ -1,0 +1,4 @@
+1. Get the application URL for each node:
+  export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ include "pet-temp-monitor.fullname" . }})
+  export NODE_IP=$(kubectl get nodes -o jsonpath="{.items[*].status.addresses[?(@.type=='InternalIP')].address}")
+  echo "Access on each node: http://<node-ip>:$NODE_PORT"

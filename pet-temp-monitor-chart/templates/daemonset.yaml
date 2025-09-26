@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ include "pet-temp-monitor.fullname" . }}
+  labels:
+    {{- include "pet-temp-monitor.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "pet-temp-monitor.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "pet-temp-monitor.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - name: pet-temp-monitor
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default "latest" }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+          - containerPort: 8080
+            name: web
+        volumeMounts:
+          - name: logs
+            mountPath: /opt/pet_temp/logs
+      volumes:
+        - name: logs
+          hostPath:
+            path: {{ .Values.logVolume.hostPath }}
+            type: DirectoryOrCreate
+      nodeSelector:
+        kubernetes.io/os: linux

@@ -1,0 +1,16 @@
+image:
+  repository: shihkauskas/pet-temp-monitor
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+service:
+  type: NodePort
+  port: 8080
+  nodePort: 30080
+
+logVolume:
+  hostPath: /var/log/pet_temp  # Путь на хосте для логов
+
+deployment:
+  enabled: true
+  replicas: 10
