@@ -97,7 +97,7 @@ sudo useradd -r -s /bin/false pet-temp
 
 ### Шаг 3: Клонирование репозитория
 ```bash
-git clone https://github.com/yourusername/temperature-monitor.git
+git clone https://github.com/shihkauskas/pet_temp_monitor.git
 sudo mkdir -p /opt/pet_temp/logs
 sudo mv temperature-monitor/temp_monitor_core.py /opt/pet_temp/
 sudo mv temperature-monitor/temp_monitor_web.py /opt/pet_temp/
